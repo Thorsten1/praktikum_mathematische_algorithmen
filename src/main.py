@@ -1,6 +1,8 @@
+#!/usr/bin/env python
+
 import sys
 
-from Graph_Database.graph import Graph
+from graph.graph import Graph
 
 if __name__ == '__main__':
     if len(sys.argv) == 0:
