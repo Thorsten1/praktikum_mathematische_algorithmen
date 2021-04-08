@@ -8,4 +8,4 @@ if __name__ == '__main__':
         exit(1)
     graph = Graph(0)
     graph.import_from_file(sys.argv[1])
-    print(graph)
+    graph.breadth_first_search()

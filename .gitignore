@@ -1,2 +1,5 @@
 venv/
 .idea/
+*.txt
+*/__pycache__*
+Graph_Database/__pycache__/*
