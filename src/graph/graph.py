@@ -1,13 +1,26 @@
-from queue import Queue
+import functools
+import time
+from collections import deque
 from typing import Union
 
 
+def timeit(func):
+    @functools.wraps(func)
+    def newfunc(*args, **kwargs):
+        startTime = time.time()
+        func(*args, **kwargs)
+        elapsedTime = time.time() - startTime
+        print('function [{}] finished in {} ms'.format(
+            func.__name__, int(elapsedTime * 1000)))
+    return newfunc
+
+
 class Vertex:
-    def __init__(self, value: int, edges=None, degree=None):
+    def __init__(self, value: int, edges=None, degree=0):
         self.value = value
         self.__name__ = str(value)
-        self.edges = edges if edges is not None else {}
-        self.degree = degree if degree is not None else self.edges.__len__()
+        self.edges = edges if edges is not None else set()
+        self.degree = degree
         self._set_loop()
 
     def __eq__(self, o: Union[int, object]):
@@ -17,7 +30,7 @@ class Vertex:
             return self.value == o.value
 
     def add_edge(self, edge):
-        self.edges[edge.end.value] = edge
+        self.edges.add(edge)
         self.degree = self.degree + 1
 
     def _set_loop(self):
@@ -28,7 +41,7 @@ class Vertex:
         return f"{self.value}: {self.edges}"
 
     def __repr__(self):
-        return f"{self.value}: {self.edges}"
+        return f"{self.value}"
 
 
 class Edge:
@@ -69,7 +82,7 @@ class Graph:
         :param weight:
         :return: void
         """
-        start_v = self.vertexes.get(start, Vertex(value=start))
+        start_v = self.vertexes.get(start, Vertex(value=start, degree=0))
         end_v = self.vertexes.get(end, Vertex(value=end))
         start_v.add_edge(Edge(start_v, end_v, weight))
         if self.directed:
@@ -82,27 +95,34 @@ class Graph:
     def __str__(self):
         return f"{self.vertex_count}: {str(self.vertexes)}"
 
+    @timeit
     def import_from_file(self, filepath):
         with open(filepath, "r") as input_file:
             self.vertex_count = int(input_file.readline())
-            for knot in input_file.readlines():
+            for knot in input_file:
                 s, e = knot.split("\t")
                 self.add_edge(int(s), int(e))
 
+    @timeit
     def breadth_first_search(self):
         """
         Check whether the graph is connected and report the number of connected components
-        :return:
+        :return: number of components
         """
-        queue = Queue()
-        queue.put(self.vertexes[0])
-        marked = {self.vertexes[0].value: True}
-        while queue.qsize() > 0:
-            current_vertex: Vertex = queue.get()
-            # iterate through all neighbour vertexes
-            for vertex in [_.end for _ in current_vertex.edges.values()]:
-                if marked.get(vertex.value):
-                    continue
-                queue.put(vertex)
-                marked = {vertex.value: True}
-        return False
+        marked = set()
+        components = 0
+        for vert in list(self.vertexes.values()):
+            if vert.value in marked:
+                continue
+            marked.add(vert.value)
+            queue = deque([vert])
+            while queue:
+                current_vertex: Vertex = queue.popleft()
+                # iterate through all neighbour vertexes
+                for vertex in [_.end for _ in current_vertex.edges]:
+                    if vertex.value in marked:
+                        continue
+                    queue.append(vertex)
+                    marked.add(vertex.value)
+            components = components + 1
+        print(components)
