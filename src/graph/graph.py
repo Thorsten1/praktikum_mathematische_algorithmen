@@ -82,15 +82,13 @@ class Graph:
         :param weight:
         :return: void
         """
-        start_v = self.vertexes.get(start, Vertex(value=start, degree=0))
-        end_v = self.vertexes.get(end, Vertex(value=end))
+        start_v = self.vertexes.get(start)
+        end_v = self.vertexes.get(end)
         start_v.add_edge(Edge(start_v, end_v, weight))
         if self.directed:
             end_v.add_edge(Edge(start_v, end_v, weight))
         else:
             end_v.add_edge(Edge(end_v, start_v, weight))
-        self.vertexes[start_v.value] = start_v
-        self.vertexes[end_v.value] = end_v
 
     def __str__(self):
         return f"{self.vertex_count}: {str(self.vertexes)}"
@@ -99,6 +97,8 @@ class Graph:
     def import_from_file(self, filepath):
         with open(filepath, "r") as input_file:
             self.vertex_count = int(input_file.readline())
+            for i in range(self.vertex_count):
+                self.vertexes[i] = Vertex(value=i)
             for knot in input_file:
                 s, e = knot.split("\t")
                 self.add_edge(int(s), int(e))
