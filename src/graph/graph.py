@@ -18,7 +18,6 @@ def timeit(func):
 class Vertex:
     def __init__(self, value: int, edges=None):
         self.value = value
-        self.__name__ = str(value)
         self.edges = edges if edges is not None else set()
 
     def __eq__(self, o: Union[int, object]) -> bool:
