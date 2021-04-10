@@ -20,7 +20,6 @@ class Vertex:
         self.value = value
         self.__name__ = str(value)
         self.edges = edges if edges is not None else set()
-        self._set_loop()
 
     def __eq__(self, o: Union[int, object]) -> bool:
         """
@@ -60,10 +59,6 @@ class Vertex:
     def add_edge(self, edge):
         self.edges.add(edge)
 
-    def _set_loop(self):
-        if self.value in self.edges:
-            self.loop = True
-
     def __str__(self):
         return f"{self.value}: {self.edges}"
 
@@ -92,6 +87,19 @@ class Edge:
         if self.weight == 0:
             return f"{self.start} -> {self.end}"
         return f"{self.start} -{self.weight}-> {self.end}"
+
+    @property
+    def is_loop(self) -> bool:
+        """
+        Check whether this edge is a loop.
+
+        This method checks, whether the edge described by this edge object is a
+        loop, i.e. its ``start`` and ``end`` match the same :py:class:`.Vertex`.
+
+
+        :returns: Whether this edge is a loop.
+        """
+        return self.start == self.end
 
 
 class Graph:
