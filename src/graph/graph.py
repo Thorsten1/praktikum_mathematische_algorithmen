@@ -22,11 +22,27 @@ class Vertex:
         self.edges = edges if edges is not None else set()
         self._set_loop()
 
-    def __eq__(self, o: Union[int, object]):
+    def __eq__(self, o: Union[int, object]) -> bool:
+        """
+        Compare vertex.
+
+        This method compares the value of this vertex with integers passed. If
+        an object of type :py:class:`.Vertex` is passed, its value will be
+        compared instead.
+
+
+        :param o: The object to be matched.
+
+        :returns: Whether the passed object matches this vertex. Although
+            objects of any type may be passed, this method statically returns
+            false, if the passed type can't be handled by this vertex.
+        """
         if isinstance(o, int):
             return self.value == o
         elif isinstance(o, Vertex):
             return self.value == o.value
+        else:
+            return False
 
     @property
     def degree(self) -> int:
