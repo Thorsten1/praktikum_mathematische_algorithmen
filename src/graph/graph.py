@@ -16,11 +16,10 @@ def timeit(func):
 
 
 class Vertex:
-    def __init__(self, value: int, edges=None, degree=0):
+    def __init__(self, value: int, edges=None):
         self.value = value
         self.__name__ = str(value)
         self.edges = edges if edges is not None else set()
-        self.degree = degree
         self._set_loop()
 
     def __eq__(self, o: Union[int, object]):
@@ -29,9 +28,21 @@ class Vertex:
         elif isinstance(o, Vertex):
             return self.value == o.value
 
+    @property
+    def degree(self) -> int:
+        """
+        Get degree of this vertex.
+
+        This method returns the degree of a specific vertex by counting the
+        edges connected to it.
+
+
+        :returns: The degree of this vertex.
+        """
+        return len(self.edges)
+
     def add_edge(self, edge):
         self.edges.add(edge)
-        self.degree = self.degree + 1
 
     def _set_loop(self):
         if self.value in self.edges:
