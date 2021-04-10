@@ -35,4 +35,4 @@ if __name__ == '__main__':
 
     graph = Graph(0)
     graph.import_from_file(args.graph)
-    graph.breadth_first_search()
+    graph.component_time()

@@ -137,26 +137,115 @@ class Graph:
                 s, e = knot.split("\t")
                 self.add_edge(int(s), int(e))
 
-    @timeit
-    def breadth_first_search(self):
+    @property
+    def components(self) -> int:
         """
-        Check whether the graph is connected and report the number of connected components
-        :return: number of components
+        Get the number of components for this graph.
+
+        This method dynamically calculates the number of components for this
+        graph by counting the search operations required on this graph, until
+        all vertexes have been marked by the search algorithm.
+
+
+        :returns: Number of components for this graph.
         """
-        marked = set()
+        # Iterate over the vertexes of this graph and run a search algorithm
+        # originating from each of them. As the search algorithm updates the
+        # vertexes marked, following iterations will ignore these nodes, so each
+        # iteration is equivalent to a component of the graph.
+        #
+        # NOTE: Using lambda functions usually introduces some overhead for
+        #       calling 'other' functions. However, as filter functions don't
+        #       write data but just return a binary result, even large datasets
+        #       didn't show a decreased performance compared to iterating over
+        #       all items with checking the marked status inside the loop.
         components = 0
-        for vert in list(self.vertexes.values()):
-            if vert.value in marked:
-                continue
-            marked.add(vert.value)
-            queue = deque([vert])
-            while queue:
-                current_vertex: Vertex = queue.popleft()
-                # iterate through all neighbour vertexes
-                for vertex in [_.end for _ in current_vertex.edges]:
-                    if vertex.value in marked:
-                        continue
-                    queue.append(vertex)
-                    marked.add(vertex.value)
-            components = components + 1
-        print(components)
+        marked: set[int] = set()
+        for i in filter(lambda x: x not in marked, self.vertexes):
+            # Start a search operation originating from the current vertex, but
+            # don't give it a needle to search to force it traversing the whole
+            # component of the graph this vertex belongs to. After increasing
+            # the component counter, the operation will be repeated with the
+            # next unmarked vertex, until all vertexes have been marked.
+            self.bfs(-1, self.vertexes[i], marked)
+            components += 1
+
+        return components
+
+    def bfs(self, needle: int, start: Vertex, marked: set[int] = None) -> bool:
+        """
+        Search ``needle`` in this graph by using a breath-first-search (BFS).
+
+        This method implements searching a ``needle`` in this graph by using a
+        breath-first-search (BFS) algorithm originating from :py:class:`.Vertex`
+        ``start``.
+
+        .. note:: This method is optimized to be used by :py:meth:`components`.
+            As the current goal is speed optimization, this method doesn't
+            implement the actual comparison of vertex values yet.
+
+
+        :param needle: The needle to search.
+        :param start: At which :py:class:`.Vertex` to start the search.
+        :param marked: An optional set identifying the vertexes already visited
+            and marked to be ignored in further search operations. By not
+            passing this argument, the search operation will start from scratch.
+            As python usually passes by reference, passing an empty set to this
+            parameter can be used to get the vertexes visited, too.
+
+        :returns: A boolean indicating whether ``needle`` has been found in this
+            graph or not.
+        """
+        # If no marked vertexes have been passed, start this search operation
+        # from scratch by creating an empty marked set.
+        if marked is None:
+            marked = set()
+
+        # Initialize the search queue with the first vertex as starting point
+        # and mark it as visited to avoid loops during search.
+        marked.add(start.value)
+        queue = deque([start])
+
+        # Run the vertex queue until no vertexes are left to be traversed. New
+        # vertexes will be queued by the BFS algorithm in the loop's body and
+        # visited in following iterations.
+        while queue:
+            # Iterate over the edges of the vertex to get its connected vertexes
+            # and check them to match the needle or further searching starting
+            # from them.
+            #
+            # NOTE: Due to the current implementation of the 'Vertex' class,
+            #       this will iterate over both edges starting and ending at
+            #       this vertex. For directed graphs, edges starting from the
+            #       vertex should be stored separately to just iterate these
+            #       below instead of all.
+            for e in (queue.popleft()).edges:
+                # TODO: As this method is optimized for getting the components
+                #       of a graph, no actual search will be done. Therefore, to
+                #       get a working BFS, one needs to uncomment the following
+                #       lines of code:
+                #
+                #       if e.end.value == needle:
+                #           return True
+
+                # If the connected vertex doesn't match the needle, check if its
+                # already has been marked as visited (or a visit is scheduled).
+                # If so, no second visit is required.
+                if e.end.value in marked:
+                    continue
+
+                # As this vertex likely was never seen before, it should be
+                # visited by the search algorithm and will be enqueued. It is
+                # marked as visited to avoid further vertex operations to
+                # enqueue the same vertex twice.
+                marked.add(e.end.value)
+                queue.append(e.end)
+
+        # If the method didn't return yet, the search didn't succeed and needle
+        # couldn't be found in the component of the graph, the start vertex does
+        # belong to.
+        return False
+
+    @timeit
+    def component_time(self):
+        print(self.components)
