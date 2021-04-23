@@ -1,7 +1,7 @@
 import functools
 import time
 from collections import deque
-from typing import Union, Set
+from typing import Union
 
 
 def timeit(func):
@@ -226,7 +226,7 @@ class Graph:
 
         return components
 
-    def bfs(self, needle: int, start: Vertex, marked: Set[int] = None) -> bool:
+    def bfs(self, needle: int, start: Vertex, marked: set[int] = None) -> bool:
         """
         Search ``needle`` in this graph by using a breath-first-search (BFS).
 
