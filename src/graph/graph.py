@@ -6,13 +6,15 @@ from typing import Union
 
 def timeit(func):
     @functools.wraps(func)
-    def newfunc(*args, **kwargs):
-        startTime = time.time()
-        func(*args, **kwargs)
-        elapsedTime = time.time() - startTime
+    def wrapped(*args, **kwargs):
+        start_time = time.time()
+        res = func(*args, **kwargs)
+        elapsed_time = time.time() - start_time
         print('function [{}] finished in {} ms'.format(
-            func.__name__, int(elapsedTime * 1000)))
-    return newfunc
+            func.__name__, int(elapsed_time * 1000)))
+        return res
+
+    return wrapped
 
 
 class Vertex:
@@ -77,6 +79,58 @@ class Edge:
         self.end = end
         self.weight = weight
 
+    def __lt__(self, o):
+        """
+        Compare the weight of Edges
+
+        :param o: Value to compare with, either Edge or int
+        :return: bool Value whether the own weight is less then the other value  (self < o)
+        """
+        if isinstance(o, Edge):
+            return self.weight < o.weight
+        if isinstance(o, int):
+            return self.weight < o
+        return False
+
+    def __le__(self, o):
+        """
+        Compare the weight of Edges
+
+        :param o: Value to compare with, either Edge or int
+        :return: bool Value whether the own weight is less then or equal to the other value  (self <= o)
+        """
+        if isinstance(o, Edge):
+            return self.weight <= o.weight
+        if isinstance(o, int):
+            return self.weight <= o
+        return False
+
+    def __gt__(self, o):
+        """
+        Compare the weight of Edges
+
+        :param o: Value to compare with, either Edge or int
+        :return: bool Value whether the own weight is greater then the other value  (self < o)
+        """
+        if isinstance(o, Edge):
+            return self.weight > o.weight
+        if isinstance(o, int):
+            return self.weight > o
+        return False
+
+    def __ge__(self, o):
+        """
+        Compare the weight of Edges
+
+        :param o: Value to compare with, either Edge or int
+        :return: bool Value whether the own weight is greater then or equal to the other value  (self <= o)
+        """
+        if isinstance(o, Edge):
+            return self.weight >= o.weight
+        if isinstance(o, int):
+            return self.weight >= o
+        return False
+
     def __str__(self):
         if self.weight == 0:
             return f"{self.start} -> {self.end}"
@@ -102,7 +156,7 @@ class Edge:
 
 
 class Graph:
-    def __init__(self, vertex_count: int, directed=False, vertexes=None, weighted=False):
+    def __init__(self, vertex_count=0, directed=False, vertexes=None, weighted=False):
         self.vertex_count = vertex_count
         self.vertexes = vertexes if vertexes is not None else {}
         self.directed = directed
