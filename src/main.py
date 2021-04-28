@@ -4,6 +4,7 @@ import argparse
 
 from graph.graph import Graph
 from graph.mst.prim import Prim
+from graph.mst.kruskal import Kruskal
 
 
 def getArgs() -> argparse.Namespace:
@@ -22,6 +23,10 @@ def getArgs() -> argparse.Namespace:
 
     parser.add_argument('graph',
                         help='graph file to load')
+
+    parser.add_argument('-k', '--kruskal',
+                        action='store_true',
+                        help='Use the Kruskal algorithm to declare an MSTs cost')
     parser.add_argument('-p', '--prim',
                         action='store_true',
                         help='Use the Prim algorithm to declare an MSTs cost')
@@ -36,10 +41,17 @@ if __name__ == '__main__':
     # Parse the command line arguments. If necessary, this function will print
     # error messages and exits the application on errors.
     args = getArgs()
-    if args.prim:
+
+    if args.kruskal:
+        mst = Kruskal()
+        mst.import_from_file(args.graph)
+        print(mst())
+
+    elif args.prim:
         mst = Prim()
         mst.import_from_file(args.graph)
         print(mst())
+
     else:
         graph = Graph()
         graph.import_from_file(args.graph)

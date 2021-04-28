@@ -6,7 +6,7 @@ from graph.graph import Graph, Vertex
 class MST(abc.ABC):
     def __init__(self):
         super().__init__()
-        self.graph = Graph()
+        self.graph = Graph(weighted=True)
 
     def import_from_file(self, filepath):
         """
