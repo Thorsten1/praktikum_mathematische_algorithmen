@@ -161,6 +161,7 @@ class Graph:
         self.vertexes = vertexes if vertexes is not None else {}
         self.directed = directed
         self.weighted = weighted
+        self.edges = set()
 
     def add_edge(self, start: int, end: int, weight=0):
         """
@@ -172,10 +173,18 @@ class Graph:
         """
         start_v = self.vertexes.get(start)
         end_v = self.vertexes.get(end)
-        start_v.add_edge(Edge(start_v, end_v, weight))
-        if self.directed:
-            end_v.add_edge(Edge(start_v, end_v, weight))
-        else:
+
+        # Create a new edge object and add it to the internal list of edges.
+        # Although it is not required for operating on graphs, it will be used
+        # for optimized performance and avoid iterating over all vertexes.
+        edge = Edge(start_v, end_v, weight)
+        self.edges.add(edge)
+
+        # Add the edge to its start vertex, allowing the vertex to know its
+        # adjacent vertexes. For undirected graphs, the end vertex will get an
+        # edge of opposite direction, too.
+        start_v.add_edge(edge)
+        if not self.directed:
             end_v.add_edge(Edge(end_v, start_v, weight))
 
     def __str__(self):
