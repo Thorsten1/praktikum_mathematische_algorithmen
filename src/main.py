@@ -3,8 +3,9 @@
 import argparse
 
 from graph.graph import Graph
-from graph.mst.prim import Prim
 from graph.mst.kruskal import Kruskal
+from graph.mst.prim import Prim
+from src.graph.tsp.nearestNeighbour import NearestNeighbour
 
 
 def getArgs() -> argparse.Namespace:
@@ -30,6 +31,9 @@ def getArgs() -> argparse.Namespace:
     parser.add_argument('-p', '--prim',
                         action='store_true',
                         help='Use the Prim algorithm to declare an MSTs cost')
+    parser.add_argument('-n', '--nearestneighbour',
+                        action='store_true',
+                        help='Use nearest Neighbour to determine an optimal round trip')
 
     # Parse the command line arguments and return the generated namespace. If
     # an argument is unknown, or its value does not match the specification, an
@@ -51,6 +55,11 @@ if __name__ == '__main__':
         mst = Prim()
         mst.import_from_file(args.graph)
         print(mst())
+
+    elif args.nearestneighbour:
+        tsp = NearestNeighbour()
+        tsp.import_from_file(args.graph)
+        print(tsp().overall_weight)
 
     else:
         graph = Graph()
