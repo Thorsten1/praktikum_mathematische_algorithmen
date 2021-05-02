@@ -29,11 +29,11 @@ class Prim(MST):
         current_edge: Edge = Edge(start_v, start_v, 0)
         # python do-while implementation so first execution works with empty priority queue
         while True:
-            if current_edge.end.value not in visited_vertexes:
-                visited_vertexes.add(current_edge.end.value)
+            if current_edge.end not in visited_vertexes:
+                visited_vertexes.add(current_edge.end)
                 mst_cost += current_edge.weight
                 for edge in current_edge.end.edges:
-                    if edge.end.value not in visited_vertexes:
+                    if edge.end not in visited_vertexes:
                         heapq.heappush(priority_queue, edge)
             if priority_queue and len(visited_vertexes) < len(self.graph.vertexes):
                 current_edge = heapq.heappop(priority_queue)
