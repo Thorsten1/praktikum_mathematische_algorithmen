@@ -1,12 +1,12 @@
 import abc
 
-from graph.graph import Graph, Vertex
+from graph import Graph, Vertex
 
 
 class MST(abc.ABC):
-    def __init__(self):
+    def __init__(self, graph=None):
         super().__init__()
-        self.graph = Graph(weighted=True)
+        self.graph = graph or Graph(weighted=True)
 
     def import_from_file(self, filepath):
         """

@@ -1,5 +1,5 @@
-from src.graph.graph import Graph, timeit
-from src.graph.tsp.abstractTSP import TSP
+from graph.graph import Graph, timeit
+from graph.tsp.abstractTSP import TSP
 
 
 class NearestNeighbour(TSP):

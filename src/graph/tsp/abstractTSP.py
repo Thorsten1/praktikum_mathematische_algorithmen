@@ -1,8 +1,7 @@
 import abc
 
 from graph.graph import Graph, Vertex
-
-from src.graph.graph import timeit
+from graph.graph import timeit
 
 
 class TSP(abc.ABC):
