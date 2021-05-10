@@ -44,6 +44,9 @@ class Vertex:
         else:
             return False
 
+    def __hash__(self):
+        return self.value
+
     @property
     def degree(self) -> int:
         """
@@ -61,10 +64,10 @@ class Vertex:
         self.edges.add(edge)
 
     def __str__(self):
-        return f"{self.value}: {self.edges}"
+        return f"{self.value}"
 
     def __repr__(self):
-        return f"{self.value}"
+        return self.__str__()
 
 
 class Edge:
@@ -134,12 +137,16 @@ class Edge:
     def __str__(self):
         if self.weight == 0:
             return f"{self.start} -> {self.end}"
-        return f"{self.start} -{self.weight}-> {self.end}"
+        return f"{self.start} -({self.weight})-> {self.end}"
+
+    def __eq__(self, o):
+        return hash(o) == self.__hash__()
 
     def __repr__(self):
-        if self.weight == 0:
-            return f"{self.start} -> {self.end}"
-        return f"{self.start} -{self.weight}-> {self.end}"
+        self.__str__()
+
+    def __hash__(self):
+        return hash(f"{self.start.value}:{self.end.value}")
 
     @property
     def is_loop(self) -> bool:
@@ -162,6 +169,20 @@ class Graph:
         self.directed = directed
         self.weighted = weighted
         self.edges = set()
+
+    def add_existing_edge(self, edge: Edge):
+        """
+        Add an edge to the Graph as well as the vertexes if not yet present
+        This will not take the old vertexes but generate new ones to strip them from theire edges
+        :param edge: The edge that shall be added
+        :return: void
+        """
+        # Generate a new edge and new vertexes so they aren't related to the old graph
+        if not self.vertexes.get(edge.start.value):
+            self.vertexes[edge.start.value] = Vertex(edge.start.value)
+        if not self.vertexes.get(edge.end.value):
+            self.vertexes[edge.end.value] = Vertex(edge.end.value)
+        self.add_edge(edge.start.value, edge.end.value, edge.weight)
 
     def add_edge(self, start: int, end: int, weight=0):
         """
@@ -189,6 +210,18 @@ class Graph:
 
     def __str__(self):
         return f"{self.vertex_count}: {str(self.vertexes)}"
+
+    @property
+    def overall_weight(self) -> float:
+        """
+        Returns the overall weight of all edges within the Graph.
+        Mostly used for TSP method
+
+        :return: The weight of all edges
+        """
+        if not self.weighted:
+            return 0
+        return sum([_.weight for _ in self.edges])
 
     @timeit
     def import_from_file(self, filepath):
