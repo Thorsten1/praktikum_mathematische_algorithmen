@@ -1,13 +1,16 @@
 import abc
 
-from graph import Graph, Vertex
+from graph.graph import Graph, Vertex
+from graph.graph import timeit
 
 
-class MST(abc.ABC):
-    def __init__(self, graph=None):
+class TSP(abc.ABC):
+    def __init__(self):
         super().__init__()
-        self.graph = graph or Graph(weighted=True)
+        self.graph = Graph(weighted=True)
+        self.round_trip: Graph = Graph(weighted=True)
 
+    @timeit
     def import_from_file(self, filepath):
         """
         Import the given file as mst
