@@ -1,7 +1,7 @@
-from graph.graph import Edge, Vertex, timeit
-from graph.mst.abstractMst import MST
-
 from typing import Iterator, Optional
+
+from graph import Edge, Vertex, timeit, Graph
+from graph.mst.abstractMst import MST
 
 
 class Bucket():
@@ -114,6 +114,7 @@ class Bucket():
 
 
 class Kruskal(MST):
+    mst = Graph()
     def __call__(self):
         return self._kruskal_cost()
 
@@ -166,3 +167,14 @@ class Kruskal(MST):
         :returns: The algorithm's runtime.
         """
         return sum(map(lambda e: e.weight, self._kruskal()))
+
+    @timeit
+    def get_mst(self) -> Graph:
+        """
+        Run the Kruskal algorithm and get the found MST
+
+        :return: A Graph object that contains the found MST
+        """
+        self.mst = Graph(self.graph.vertex_count)
+        list(map(self.mst.add_existing_edge, self._kruskal()))
+        return self.mst

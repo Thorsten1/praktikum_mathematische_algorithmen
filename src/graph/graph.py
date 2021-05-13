@@ -342,6 +342,38 @@ class Graph:
         # belong to.
         return False
 
+    def dfs(self, start_vertex=0) -> list[Vertex]:
+        """
+        Depth First Search for double tree algorithm
+        Returns a list of all traversed vertexes
+
+        :param start_vertex: The Vertex where to start the mst
+        :return: A list of all vertexes
+        """
+        # The return list
+        vertexes_passed = []
+        # set of visited elements
+        visited = set()
+        # add the start_vertex to the stack of vertexes
+        stack = [self.vertexes.get(start_vertex)]
+
+        while stack:
+            # get the current vertex from the stack
+            current_vertex = stack.pop()
+            if current_vertex in visited:
+                continue
+            # mark current vertex aas visited
+            visited.add(current_vertex)
+            # add vertex to list of passed vertexes
+            vertexes_passed.append(current_vertex)
+            # add all vertexes that can be accessed via the current_vertex to the stack
+            for e in current_vertex.edges:
+                # only add unvisited vertexes to the stack
+                if e.end in visited:
+                    continue
+                stack.append(e.end)
+        return vertexes_passed
+
     @timeit
     def component_time(self):
         print(self.components)

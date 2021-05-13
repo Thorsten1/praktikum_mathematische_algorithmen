@@ -6,6 +6,10 @@ from graph.graph import Graph
 from graph.mst.kruskal import Kruskal
 from graph.mst.prim import Prim
 from graph.shortest_path.mooreBellmanFord import MooreBellmanFord
+from graph.tsp.branchAndBound import BranchAndBound
+from graph.tsp.bruteForce import BruteForce
+from graph.tsp.doubleTree import DoubleTree
+from graph.tsp.nearestNeighbour import NearestNeighbour
 
 
 def getArgs() -> argparse.Namespace:
@@ -34,6 +38,19 @@ def getArgs() -> argparse.Namespace:
                         action='store_true',
                         help='Use the Prim algorithm to declare an MSTs cost')
 
+    parser.add_argument('-n', '--nearestneighbour',
+                        action='store_true',
+                        help='Use nearest Neighbour to determine an optimal round trip')
+    parser.add_argument('-d', '--doubletree',
+                        action='store_true',
+                        help='Use Double-Tree Algorithm to determine an optimal round trip')
+    parser.add_argument('-bf', '--bruteforce',
+                        action='store_true',
+                        help='Use bruteforce to determine an optimal round trip')
+    parser.add_argument('-bb', '--branchAndBound',
+                        action='store_true',
+                        help='Use Branch&Bound Algorithm to determine an optimal round trip')
+
     # Parse the command line arguments and return the generated namespace. If
     # an argument is unknown, or its value does not match the specification, an
     # error message will be generated and the help message shown.
@@ -59,6 +76,28 @@ if __name__ == '__main__':
         mst = Prim()
         mst.import_from_file(args.graph)
         print(mst())
+
+    elif args.nearestneighbour:
+        tsp = NearestNeighbour()
+        tsp.import_from_file(args.graph)
+        print(tsp().overall_weight)
+
+    elif args.doubletree:
+        tsp = DoubleTree()
+        tsp.import_from_file(args.graph)
+        print(tsp().overall_weight)
+
+    elif args.bruteforce:
+        tsp = BruteForce()
+        tsp.import_from_file(args.graph)
+        tsp()
+        print(tsp.min_cost)
+
+    elif args.branchAndBound:
+        tsp = BranchAndBound()
+        tsp.import_from_file(args.graph)
+        tsp()
+        print(tsp.min_cost)
 
     else:
         graph = Graph()
