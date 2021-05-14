@@ -168,7 +168,8 @@ class Graph:
         self.vertexes = vertexes if vertexes is not None else {}
         self.directed = directed
         self.weighted = weighted
-        self.edges = set()
+        # The edges dict has the schema: edges[start_v]
+        self.edges = {k: v for (k, v) in zip(range(self.vertex_count), [{} for _ in range(self.vertex_count)])}
 
     def add_existing_edge(self, edge: Edge):
         """
@@ -199,14 +200,25 @@ class Graph:
         # Although it is not required for operating on graphs, it will be used
         # for optimized performance and avoid iterating over all vertexes.
         edge = Edge(start_v, end_v, weight)
-        self.edges.add(edge)
+        self.edges[start_v][end_v] = edge
 
         # Add the edge to its start vertex, allowing the vertex to know its
         # adjacent vertexes. For undirected graphs, the end vertex will get an
         # edge of opposite direction, too.
         start_v.add_edge(edge)
         if not self.directed:
-            end_v.add_edge(Edge(end_v, start_v, weight))
+            inverted_edge = Edge(end_v, start_v, weight)
+            self.edges[end_v][start_v] = inverted_edge
+            end_v.add_edge(inverted_edge)
+
+    def get_edge(self, start_v: int, end_v: int) -> Union[Edge, None]:
+        """
+        Returns an edge between to vertexes if present
+        :param start_v: The Value of our start vertex
+        :param end_v: The value of our end vertex
+        :return: The edge between start and end or None
+        """
+        return self.edges[start_v].get(end_v) if self.edges.get(start_v) else None
 
     def __str__(self):
         return f"{self.vertex_count}: {str(self.vertexes)}"
@@ -221,12 +233,15 @@ class Graph:
         """
         if not self.weighted:
             return 0
-        return sum([_.weight for _ in self.edges])
+        edge_list = []
+        [edge_list.extend(list(x.values())) for x in list(self.edges.values())]
+        return sum([_.weight for _ in edge_list])
 
     @timeit
     def import_from_file(self, filepath):
         with open(filepath, "r") as input_file:
             self.vertex_count = int(input_file.readline())
+            self.edges = {k: v for (k, v) in zip(range(self.vertex_count), [{} for _ in range(self.vertex_count)])}
             for i in range(self.vertex_count):
                 self.vertexes[i] = Vertex(value=i)
             for knot in input_file:

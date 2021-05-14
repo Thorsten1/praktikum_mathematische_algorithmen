@@ -22,9 +22,9 @@ class DoubleTree(TSP):
         # iterate through the list until you reach the last item
         for i in range(len(trip_vertex_list) - 1):
             # always add the edge to the next vertex
-            current_edge = next(_ for _ in self.graph.vertexes.get(trip_vertex_list[i]).edges if _ == f"{trip_vertex_list[i]}:{trip_vertex_list[i + 1]}")
+            current_edge = self.graph.get_edge(start_v=trip_vertex_list[i], end_v=trip_vertex_list[i + 1])
             self.round_trip.add_existing_edge(current_edge)
         # Add the Last edge back to the start
-        current_edge = next(_ for _ in self.graph.vertexes.get(trip_vertex_list[-1]).edges if _ == f"{trip_vertex_list[-1]}:{trip_vertex_list[0]}")
+        current_edge = self.graph.get_edge(start_v=trip_vertex_list[-1], end_v=trip_vertex_list[0])
         self.round_trip.add_existing_edge(current_edge)
         return self.round_trip

@@ -16,7 +16,7 @@ class MST(abc.ABC):
         :return: void
         """
         with open(filepath, "r") as input_file:
-            self.graph.vertex_count = int(input_file.readline())
+            self.graph = Graph(weighted=True, vertex_count=int(input_file.readline()))
             for i in range(self.graph.vertex_count):
                 self.graph.vertexes[i] = Vertex(value=i)
             for knot in input_file:
