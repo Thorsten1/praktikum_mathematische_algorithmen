@@ -29,15 +29,16 @@ def getArgs() -> argparse.Namespace:
     parser.add_argument('graph',
                         help='graph file to load')
     parser.add_argument('-m', '--moore_bellman_ford',
-                        action='store_true',
                         help='Use the Moore-Bellman-Ford Algorithm to determine shortest paths')
+    parser.add_argument('--directed',
+                        action='store_true',
+                        help='Define whether the imported graph is directed or not. (Currently only applicable for Shortest Path')
     parser.add_argument('-k', '--kruskal',
                         action='store_true',
                         help='Use the Kruskal algorithm to declare an MSTs cost')
     parser.add_argument('-p', '--prim',
                         action='store_true',
                         help='Use the Prim algorithm to declare an MSTs cost')
-
     parser.add_argument('-n', '--nearestneighbour',
                         action='store_true',
                         help='Use nearest Neighbour to determine an optimal round trip')
@@ -64,8 +65,8 @@ if __name__ == '__main__':
 
     if args.moore_bellman_ford:
         graph = MooreBellmanFord()
-        graph.import_from_file(args.graph)
-        print(graph())
+        graph.import_from_file(args.graph, directed=False or args.directed)
+        print(graph(int(args.moore_bellman_ford)))
 
     elif args.kruskal:
         mst = Kruskal()
