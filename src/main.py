@@ -6,6 +6,7 @@ from graph.graph import Graph
 from graph.mst.kruskal import Kruskal
 from graph.mst.prim import Prim
 from graph.shortest_path.mooreBellmanFord import MooreBellmanFord
+from graph.shortest_path.dijkstra import Dijkstra
 from graph.tsp.branchAndBound import BranchAndBound
 from graph.tsp.bruteForce import BruteForce
 from graph.tsp.doubleTree import DoubleTree
@@ -30,6 +31,8 @@ def getArgs() -> argparse.Namespace:
                         help='graph file to load')
     parser.add_argument('-m', '--moore_bellman_ford',
                         help='Use the Moore-Bellman-Ford Algorithm to determine shortest paths')
+    parser.add_argument('--dijkstra',
+                        help='Use the Dijkstra Algorithm to determine shortest paths')
     parser.add_argument('--directed',
                         action='store_true',
                         help='Define whether the imported graph is directed or not. (Currently only applicable for Shortest Path')
@@ -67,6 +70,11 @@ if __name__ == '__main__':
         graph = MooreBellmanFord()
         graph.import_from_file(args.graph, directed=False or args.directed)
         print(graph(int(args.moore_bellman_ford)))
+
+    elif args.dijkstra:
+        graph = Dijkstra()
+        graph.import_from_file(args.graph, directed=False or args.directed)
+        print(graph(int(args.dijkstra)))
 
     elif args.kruskal:
         mst = Kruskal()
