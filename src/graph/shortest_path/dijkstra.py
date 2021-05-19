@@ -39,14 +39,16 @@ class Dijkstra(ShortestPath):
             del remaining[cur]
 
             # Iterate over all connected vertexes not known yet and update the
-            # related distances.
+            # related distances, if these are better than the existing ones.
             for e in cur.edges:
                 if e.end in remaining:
                     if e.weight < 0:
                         print('Negative Kante im Graphen. Das Ergebnis ist ' +
                               ' ggf. nicht optimal!')
 
-                    remaining[e.end] = self.distance[cur] + e.weight
-                    self.predecessors[e.end.value] = cur.value
+                    tmp = self.distance[cur] + e.weight
+                    if tmp < remaining[e.end]:
+                        remaining[e.end] = tmp
+                        self.predecessors[e.end.value] = cur.value
 
         return self.distance.values(), self.predecessors
