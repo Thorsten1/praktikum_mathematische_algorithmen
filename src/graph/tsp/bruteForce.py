@@ -1,6 +1,6 @@
 import math
 
-from graph.graph import Graph, Vertex, timeit
+from graph.graph import Vertex, timeit
 from graph.tsp.abstractTSP import TSP
 
 

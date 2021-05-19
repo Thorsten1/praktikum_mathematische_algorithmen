@@ -19,15 +19,13 @@ class NearestNeighbour(TSP):
         start_vertex = self.graph.vertexes[0]
         current_vertex = start_vertex
         # proceed until all vertexes are present within the round trip graph
-        while self.round_trip.vertex_count < self.graph.vertex_count:
+        for _ in range(self.graph.vertex_count - 1):
             # choose the smallest edge in the list of edges where the end vertex isn't present yet
-            current_edge = next((_ for _ in sorted(current_vertex.edges) if _.end not in self.round_trip.vertexes), None)
-            if current_edge is None:
-                break
+            current_edge = min([_ for _ in current_vertex.edges if _.end not in self.round_trip.vertexes])
             self.round_trip.add_existing_edge(current_edge)
             current_vertex = current_edge.end
         # get the edge back to the start vertex
-        final_edge = next(_ for _ in current_vertex.edges if _ == f"{current_vertex}:{start_vertex}")
+        final_edge = self.graph.get_edge(start_v=current_vertex.value, end_v=start_vertex.value)
         # add the last edge back to the start to close the round trip
         self.round_trip.add_existing_edge(final_edge)
         return self.round_trip

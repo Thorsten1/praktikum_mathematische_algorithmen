@@ -128,7 +128,9 @@ class Kruskal(MST):
         # Sort all edges of the graph by weight and iterate over them to build
         # the minimal spanning tree by kruskal's algorithm.
         mark = Bucket()
-        for e in sorted(self.graph.edges):
+        edge_list = []
+        [edge_list.extend(list(x.values())) for x in list(self.graph.edges.values())]
+        for e in sorted(edge_list):
             # If at least one vertex of the edge is not marked yet, it can be
             # added to the marked set easily.
             if e.start not in mark or e.end not in mark:

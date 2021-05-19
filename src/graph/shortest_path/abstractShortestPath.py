@@ -1,22 +1,24 @@
 import abc
 
-from graph import Graph, Vertex
+from graph.graph import Graph, Vertex
+from graph.graph import timeit
 
 
-class MST(abc.ABC):
-    def __init__(self, graph=None):
+class ShortestPath(abc.ABC):
+    def __init__(self):
         super().__init__()
-        self.graph = graph or Graph(weighted=True)
+        self.graph = None
 
-    def import_from_file(self, filepath):
+    @timeit
+    def import_from_file(self, filepath, directed=True):
         """
         Import the given file as mst
-
+        :param directed: Declare whether the imported path is directed or not
         :param filepath: the path to the graph file
         :return: void
         """
         with open(filepath, "r") as input_file:
-            self.graph = Graph(weighted=True, vertex_count=int(input_file.readline()))
+            self.graph = Graph(weighted=True, vertex_count=int(input_file.readline()), directed=directed)
             for i in range(self.graph.vertex_count):
                 self.graph.vertexes[i] = Vertex(value=i)
             for knot in input_file:

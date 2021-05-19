@@ -7,8 +7,8 @@ from graph.graph import timeit
 class TSP(abc.ABC):
     def __init__(self):
         super().__init__()
-        self.graph = Graph(weighted=True)
-        self.round_trip: Graph = Graph(weighted=True)
+        self.graph = None
+        self.round_trip = None
 
     @timeit
     def import_from_file(self, filepath):
@@ -19,7 +19,8 @@ class TSP(abc.ABC):
         :return: void
         """
         with open(filepath, "r") as input_file:
-            self.graph.vertex_count = int(input_file.readline())
+            self.graph = Graph(weighted=True, vertex_count=int(input_file.readline()))
+            self.round_trip = Graph(weighted=True, vertex_count=self.graph.vertex_count)
             for i in range(self.graph.vertex_count):
                 self.graph.vertexes[i] = Vertex(value=i)
             for knot in input_file:
