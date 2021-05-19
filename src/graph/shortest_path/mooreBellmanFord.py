@@ -22,9 +22,10 @@ class MooreBellmanFord(ShortestPath):
         # The distance to our start point is 0
         self.distance[start_vertex] = 0
         # Initialize a break condition if nothing has changed within an iteration
-        found_better_distance = [False for _ in range(self.graph.vertex_count)]
+        found_better_distance = False
         # Repeat n-1 times
         for _ in range(self.graph.vertex_count - 1):
+            found_better_distance = False
             for start in self.graph.vertexes:
                 for edge in self.graph.edges[start].values():
                     # check whether the path over the edge start -> end is shorter than the previous known path to end
@@ -32,14 +33,12 @@ class MooreBellmanFord(ShortestPath):
                         # Update the distance to end and ends predecessor
                         self.distance[edge.end.value] = self.distance[start] + edge.weight
                         self.predecessors[edge.end.value] = start
-                        found_better_distance[edge.end.value] = True
-                    else:
-                        found_better_distance[edge.end.value] = False
+                        found_better_distance = True
             # break if we haven't found a better option in our current iteration
-            if True not in found_better_distance:
+            if not found_better_distance:
                 break
         # only check for negative cycles if we had an improvement in our last iteration
-        if True in found_better_distance:
+        if found_better_distance:
             # check for negative cycles
             for start in self.graph.vertexes:
                 for edge in self.graph.edges[start].values():
