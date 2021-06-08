@@ -11,6 +11,7 @@ from graph.tsp.branchAndBound import BranchAndBound
 from graph.tsp.bruteForce import BruteForce
 from graph.tsp.doubleTree import DoubleTree
 from graph.tsp.nearestNeighbour import NearestNeighbour
+from graph.flow.max.edmondsKarp import EdmondsKarp
 
 
 def getArgs() -> argparse.Namespace:
@@ -54,6 +55,14 @@ def getArgs() -> argparse.Namespace:
     parser.add_argument('-bb', '--branchAndBound',
                         action='store_true',
                         help='Use Branch&Bound Algorithm to determine an optimal round trip')
+
+    parser.add_argument('-s', '--start',
+                        help='Start vertex')
+    parser.add_argument('-t', '--target',
+                        help='Target vertex')
+    parser.add_argument('-ek', '--edmondsKarp',
+                        action='store_true',
+                        help='Use Edmonds-Karp algorithm to determine a maximal flow')
 
     # Parse the command line arguments and return the generated namespace. If
     # an argument is unknown, or its value does not match the specification, an
@@ -107,6 +116,11 @@ if __name__ == '__main__':
         tsp.import_from_file(args.graph)
         tsp()
         print(tsp.min_cost)
+
+    elif args.edmondsKarp:
+        ek = EdmondsKarp()
+        ek.import_from_file(args.graph)
+        print(ek(args.start, args.target))
 
     else:
         graph = Graph()
