@@ -2,11 +2,13 @@ import abc
 
 from graph import Graph, Vertex
 
+from src.graph.flow.flow import Flow
+
 
 class AbstractMaxFlow(abc.ABC):
     def __init__(self, graph=None):
         super().__init__()
-        self.graph = graph or Graph(weighted=True)
+        self.graph = graph or Flow()
 
     def import_from_file(self, filepath):
         """
@@ -21,8 +23,8 @@ class AbstractMaxFlow(abc.ABC):
             for i in range(self.graph.vertex_count):
                 self.graph.vertexes[i] = Vertex(value=i)
             for knot in input_file:
-                s, e, w = knot.split("\t")
-                self.graph.add_edge(int(s), int(e), float(w.replace('\n', '')))
+                s, e, c = knot.split("\t")
+                self.graph.add_edge(int(s), int(e), float(c.replace('\n', '')))
 
     @abc.abstractmethod
     def __call__(self, start, target):
