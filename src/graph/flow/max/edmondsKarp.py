@@ -1,4 +1,5 @@
 from graph.graph import timeit, Graph
+from graph.flow.flow import Flow
 
 from .abstractFlowMax import AbstractMaxFlow
 
@@ -19,17 +20,26 @@ class EdmondsKarp(AbstractMaxFlow):
         :param int target: The end of our flow
         :return The maximum flow
         """
-        maxFlow = 0
-        flows = [0 for _ in range(len(self.graph.edges))]
-        g_f = self.__residual_graph()
+        while True:
+            # Step 2: Get residual graph for current flow graph.
+            g_f = self.__residual_graph(self.graph)
 
-        return maxFlow
+            break
 
-    def __residual_graph(self) -> Graph:
-        # generate the residual graph with residualcapcitys as weight
-        g_f = Graph(vertex_count=self.graph.vertex_count, directed=True, weighted=True)
-        for v in self.graph.vertexes:
+        return 0
+
+    @staticmethod
+    def __residual_graph(graph: Flow):
+        g_f = Flow(vertex_count=graph.vertex_count)
+        for v in graph.vertexes.values():
             for e in v.edges:
-                g_f.add_existing_edge(edge=e)
-                g_f.add_edge(e.end, e.start, 0)
+                # residual capacity
+                if e.flow > 0:
+                    g_f.add_edge(e.end, e.start, e.flow)
+
+                # remaining capacity
+                u = e.capacity - e.flow
+                if u > 0:
+                    g_f.add_edge(e.start, e.end, u)
+
         return g_f

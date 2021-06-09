@@ -11,7 +11,9 @@ class FlowEdge(Edge):
 
 class Flow(Graph):
     def __init__(self, vertex_count=0, weighted=False):
-        super(Flow, self).__init__(vertex_count=vertex_count, directed=True, weighted=weighted)
+        super(Flow, self).__init__(vertex_count=vertex_count,
+                                   directed=True, weighted=weighted)
+        self.vertexes = {i: Vertex(value=i) for i in range(self.vertex_count)}
 
     def add_existing_edge(self, edge: FlowEdge):
         """
@@ -25,7 +27,8 @@ class Flow(Graph):
             self.vertexes[edge.start.value] = Vertex(edge.start.value)
         if not self.vertexes.get(edge.end.value):
             self.vertexes[edge.end.value] = Vertex(edge.end.value)
-        self.add_edge(edge.start.value, edge.end.value, edge.weight, edge.flow, edge.capacity)
+        self.add_edge(edge.start.value, edge.end.value,
+                      edge.weight, edge.flow, edge.capacity)
 
     def add_edge(self, start: int, end: int, capacity: int, flow=0, weight=0):
         """
@@ -43,7 +46,8 @@ class Flow(Graph):
         # Create a new edge object and add it to the internal list of edges.
         # Although it is not required for operating on graphs, it will be used
         # for optimized performance and avoid iterating over all vertexes.
-        edge = FlowEdge(start_v, end_v, weight=weight, capacity=capacity, flow=flow)
+        edge = FlowEdge(start_v, end_v, weight=weight,
+                        capacity=capacity, flow=flow)
         self.edges[start_v][end_v] = edge
 
         # Add the edge to its start vertex

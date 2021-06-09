@@ -2,7 +2,7 @@ import abc
 
 from graph import Graph, Vertex
 
-from src.graph.flow.flow import Flow
+from graph.flow.flow import Flow, FlowEdge
 
 
 class AbstractMaxFlow(abc.ABC):
@@ -18,8 +18,7 @@ class AbstractMaxFlow(abc.ABC):
         :return: void
         """
         with open(filepath, "r") as input_file:
-            self.graph = Graph(weighted=True,
-                               vertex_count=int(input_file.readline()))
+            self.graph = Flow(vertex_count=int(input_file.readline()))
             for i in range(self.graph.vertex_count):
                 self.graph.vertexes[i] = Vertex(value=i)
             for knot in input_file:
