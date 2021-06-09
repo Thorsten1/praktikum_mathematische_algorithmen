@@ -40,6 +40,7 @@ class EdmondsKarp(AbstractMaxFlow):
                 else:
                     self.graph.edges[pe.end][pe.start].flow -= ymin
 
+        self.flow = sum(map(lambda e: e.flow, self.graph.vertexes[start].edges))
         return self.graph
 
     @staticmethod

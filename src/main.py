@@ -123,6 +123,7 @@ if __name__ == '__main__':
         ek = EdmondsKarp()
         ek.import_from_file(args.graph)
         print(ek(args.start, args.target))
+        print('flow:', ek.flow)
 
     else:
         graph = Graph()
