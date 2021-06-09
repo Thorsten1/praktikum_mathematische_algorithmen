@@ -24,6 +24,14 @@ class EdmondsKarp(AbstractMaxFlow):
             # Step 2: Get residual graph for current flow graph.
             g_f = self.__residual_graph(self.graph)
 
+            # Step 3: Get shortest path (number of edges) from start to target.
+            #         If no path could be found, the algorithm hits its end and
+            #         finishes.
+            p = self.graph.bfs(g_f.vertexes.get(target),
+                               g_f.vertexes.get(start))
+            if not p:
+                break
+
             break
 
         return 0

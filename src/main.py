@@ -57,8 +57,10 @@ def getArgs() -> argparse.Namespace:
                         help='Use Branch&Bound Algorithm to determine an optimal round trip')
 
     parser.add_argument('-s', '--start',
+                        type=int,
                         help='Start vertex')
     parser.add_argument('-t', '--target',
+                        type=int,
                         help='Target vertex')
     parser.add_argument('-ek', '--edmondsKarp',
                         action='store_true',

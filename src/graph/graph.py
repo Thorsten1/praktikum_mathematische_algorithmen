@@ -1,7 +1,7 @@
 import functools
 import time
 from collections import deque
-from typing import Union
+from typing import Optional, Union
 
 
 def timeit(func):
@@ -283,7 +283,12 @@ class Graph:
 
         return components
 
-    def bfs(self, needle: int, start: Vertex, marked: set[int] = None) -> bool:
+    def bfs(self,
+            needle: int,
+            start: Vertex,
+            marked: set[int] = None,
+            pred: dict[list[int]] = None
+            ) -> Optional[list[int]]:
         """
         Search ``needle`` in this graph by using a breath-first-search (BFS).
 
@@ -303,14 +308,20 @@ class Graph:
             passing this argument, the search operation will start from scratch.
             As python usually passes by reference, passing an empty set to this
             parameter can be used to get the vertexes visited, too.
+        :param pred: predecessors of any given vertex while traversing.
 
-        :returns: A boolean indicating whether ``needle`` has been found in this
-            graph or not.
+        :returns: The path to find the ``needle`` from start or
+            :py:class:`False`, if ``needle`` could not be found.
         """
         # If no marked vertexes have been passed, start this search operation
         # from scratch by creating an empty marked set.
         if marked is None:
             marked = set()
+
+        # If no predecessors have been passed, just add an empty list for the
+        # start vertex, as it doesn't have any predecessors.
+        if pred is None:
+            pred = {start: []}
 
         # Initialize the search queue with the first vertex as starting point
         # and mark it as visited to avoid loops during search.
@@ -331,13 +342,10 @@ class Graph:
             #       vertex should be stored separately to just iterate these
             #       below instead of all.
             for e in (queue.popleft()).edges:
-                # TODO: As this method is optimized for getting the components
-                #       of a graph, no actual search will be done. Therefore, to
-                #       get a working BFS, one needs to uncomment the following
-                #       lines of code:
-                #
-                #       if e.end.value == needle:
-                #           return True
+                # If the needle has been found, return the list of predecessors
+                # (including the current vertex) to indicate success.
+                if e.end.value == needle:
+                    return pred[e.start] + [e.start, e.end]
 
                 # If the connected vertex doesn't match the needle, check if its
                 # already has been marked as visited (or a visit is scheduled).
@@ -348,9 +356,12 @@ class Graph:
                 # As this vertex likely was never seen before, it should be
                 # visited by the search algorithm and will be enqueued. It is
                 # marked as visited to avoid further vertex operations to
-                # enqueue the same vertex twice.
+                # enqueue the same vertex twice. In addition, its list of
+                # predecessors will be saved, to allow following the path from
+                # start to needle if found.
                 marked.add(e.end.value)
                 queue.append(e.end)
+                pred[e.end] = pred[e.start] + [e.start]
 
         # If the method didn't return yet, the search didn't succeed and needle
         # couldn't be found in the component of the graph, the start vertex does
