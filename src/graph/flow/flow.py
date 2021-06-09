@@ -1,12 +1,17 @@
 # flow class
 from graph import Graph, Edge, Vertex
+from functools import reduce
 
 
 class FlowEdge(Edge):
-    def __init__(self, start: Vertex, end: Vertex, capacity: int, flow=0, weight=0):
+    def __init__(self, start: Vertex, end: Vertex, capacity: int, flow=0, weight=0, residual=False):
         super(FlowEdge, self).__init__(start, end, weight)
         self.flow = flow
         self.capacity = capacity
+        self.residual = residual
+
+    def __str__(self):
+        return f"{self.start} -> {self.end} ({self.flow} / {self.capacity})"
 
 
 class Flow(Graph):
@@ -30,7 +35,7 @@ class Flow(Graph):
         self.add_edge(edge.start.value, edge.end.value,
                       edge.weight, edge.flow, edge.capacity)
 
-    def add_edge(self, start: int, end: int, capacity: int, flow=0, weight=0):
+    def add_edge(self, start: int, end: int, capacity: int, flow=0, weight=0, residual=False):
         """
         Add an edge to the Graph as well as the vertexes if not yet present
         :param start:
@@ -38,6 +43,7 @@ class Flow(Graph):
         :param weight:
         :param capacity:
         :param flow
+        :param residual:
         :return: void
         """
         start_v = self.vertexes.get(start)
@@ -47,8 +53,17 @@ class Flow(Graph):
         # Although it is not required for operating on graphs, it will be used
         # for optimized performance and avoid iterating over all vertexes.
         edge = FlowEdge(start_v, end_v, weight=weight,
-                        capacity=capacity, flow=flow)
+                        capacity=capacity, flow=flow, residual=residual)
         self.edges[start_v][end_v] = edge
 
         # Add the edge to its start vertex
         start_v.add_edge(edge)
+
+    def _flatten_edges(self):
+        for s in self.edges:
+            for e in self.edges[s]:
+                yield self.edges[s][e]
+
+    def __str__(self):
+        flow = list(filter(lambda e: e.flow > 0, self._flatten_edges()))
+        return f"{flow}"

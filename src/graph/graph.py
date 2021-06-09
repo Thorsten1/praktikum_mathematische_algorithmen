@@ -345,7 +345,7 @@ class Graph:
                 # If the needle has been found, return the list of predecessors
                 # (including the current vertex) to indicate success.
                 if e.end.value == needle:
-                    return pred[e.start] + [e.start, e.end]
+                    return pred[e.start] + [e]
 
                 # If the connected vertex doesn't match the needle, check if its
                 # already has been marked as visited (or a visit is scheduled).
@@ -361,7 +361,7 @@ class Graph:
                 # start to needle if found.
                 marked.add(e.end.value)
                 queue.append(e.end)
-                pred[e.end] = pred[e.start] + [e.start]
+                pred[e.end] = pred[e.start] + [e]
 
         # If the method didn't return yet, the search didn't succeed and needle
         # couldn't be found in the component of the graph, the start vertex does

@@ -32,9 +32,15 @@ class EdmondsKarp(AbstractMaxFlow):
             if not p:
                 break
 
-            break
+            # Step 4: Update flow along path p with its minimum capacity.
+            ymin = min(map(lambda e: e.capacity, p))
+            for pe in p:
+                if not pe.residual:
+                    self.graph.edges[pe.start][pe.end].flow += ymin
+                else:
+                    self.graph.edges[pe.end][pe.start].flow -= ymin
 
-        return 0
+        return self.graph
 
     @staticmethod
     def __residual_graph(graph: Flow):
@@ -43,7 +49,7 @@ class EdmondsKarp(AbstractMaxFlow):
             for e in v.edges:
                 # residual capacity
                 if e.flow > 0:
-                    g_f.add_edge(e.end, e.start, e.flow)
+                    g_f.add_edge(e.end, e.start, e.flow, residual=True)
 
                 # remaining capacity
                 u = e.capacity - e.flow
