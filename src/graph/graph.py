@@ -143,7 +143,7 @@ class Edge:
         return hash(o) == self.__hash__()
 
     def __repr__(self):
-        self.__str__()
+        return self.__str__()
 
     def __hash__(self):
         return hash(f"{self.start.value}:{self.end.value}")
