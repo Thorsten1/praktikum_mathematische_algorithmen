@@ -5,9 +5,9 @@ from graph.graph import timeit
 
 
 class ShortestPath(abc.ABC):
-    def __init__(self):
+    def __init__(self, graph=None):
         super().__init__()
-        self.graph = None
+        self.graph = graph
 
     @timeit
     def import_from_file(self, filepath, directed=True):

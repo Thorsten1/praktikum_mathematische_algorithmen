@@ -3,8 +3,8 @@ from graph.shortest_path.abstractShortestPath import ShortestPath
 
 
 class MooreBellmanFord(ShortestPath):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, graph=None):
+        super().__init__(graph)
 
     def __call__(self, start_vertex: int):
         return self._moore_bellman_ford(start_vertex)

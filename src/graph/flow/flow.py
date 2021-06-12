@@ -1,6 +1,11 @@
 # flow class
 from graph import Graph, Edge, Vertex
-from functools import reduce
+
+
+class BalanceVertex(Vertex):
+    def __init__(self, value: int, balance=0, edges=None):
+        super(BalanceVertex, self).__init__(value=value, edges=edges)
+        self.balance = balance
 
 
 class FlowEdge(Edge):
@@ -18,7 +23,7 @@ class Flow(Graph):
     def __init__(self, vertex_count=0, weighted=False):
         super(Flow, self).__init__(vertex_count=vertex_count,
                                    directed=True, weighted=weighted)
-        self.vertexes = {i: Vertex(value=i) for i in range(self.vertex_count)}
+        self.vertexes = {i: BalanceVertex(value=i) for i in range(self.vertex_count)}
 
     def add_existing_edge(self, edge: FlowEdge):
         """
@@ -29,13 +34,13 @@ class Flow(Graph):
         """
         # Generate a new edge and new vertexes so they aren't related to the old graph
         if not self.vertexes.get(edge.start.value):
-            self.vertexes[edge.start.value] = Vertex(edge.start.value)
+            self.vertexes[edge.start.value] = BalanceVertex(edge.start.value)
         if not self.vertexes.get(edge.end.value):
-            self.vertexes[edge.end.value] = Vertex(edge.end.value)
+            self.vertexes[edge.end.value] = BalanceVertex(edge.end.value)
         self.add_edge(edge.start.value, edge.end.value,
                       edge.weight, edge.flow, edge.capacity)
 
-    def add_edge(self, start: int, end: int, capacity: int, flow=0, weight=0, residual=False):
+    def add_edge(self, start: int, end: int, capacity: float, flow=0, weight=0, residual=False):
         """
         Add an edge to the Graph as well as the vertexes if not yet present
         :param start:
@@ -67,3 +72,18 @@ class Flow(Graph):
     def __str__(self):
         flow = list(filter(lambda e: e.flow > 0, self._flatten_edges()))
         return f"{flow}"
+
+
+def residual_graph(graph: Flow):
+    g_f = Flow(vertex_count=graph.vertex_count)
+    for v in graph.vertexes.values():
+        for e in v.edges:
+            # residual capacity
+            if e.flow > 0:
+                g_f.add_edge(e.end, e.start, e.flow, residual=True)
+            # remaining capacity
+            u = e.capacity - e.flow
+            if u > 0:
+                g_f.add_edge(e.start, e.end, u)
+
+    return g_f

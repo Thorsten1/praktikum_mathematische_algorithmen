@@ -1,10 +1,9 @@
 import abc
 
-from graph.flow.flow import Flow
-from graph.graph import Vertex
+from ..flow import Flow, BalanceVertex
 
 
-class AbstractMaxFlow(abc.ABC):
+class AbstractCostminFlow(abc.ABC):
     def __init__(self, graph=None):
         super().__init__()
         self.graph = graph or Flow()
@@ -19,13 +18,13 @@ class AbstractMaxFlow(abc.ABC):
         with open(filepath, "r") as input_file:
             self.graph = Flow(vertex_count=int(input_file.readline()))
             for i in range(self.graph.vertex_count):
-                self.graph.vertexes[i] = Vertex(value=i)
+                self.graph.vertexes[i] = BalanceVertex(value=i, balance=input_file.readline())
             for knot in input_file:
-                s, e, c = knot.split("\t")
-                self.graph.add_edge(int(s), int(e), float(c.replace('\n', '')))
+                s, e, cost, cap = knot.split("\t")
+                self.graph.add_edge(int(s), int(e), weight=float(cost.replace('\n', '')), capacity=float(cap))
 
     @abc.abstractmethod
-    def __call__(self, start, target):
+    def __call__(self):
         """
         """
         pass

@@ -1,7 +1,7 @@
-from graph.graph import timeit, Graph
-from graph.flow.flow import Flow
+from graph.graph import timeit
 
 from .abstractFlowMax import AbstractMaxFlow
+from ..flow import residual_graph
 
 
 class EdmondsKarp(AbstractMaxFlow):
@@ -22,8 +22,7 @@ class EdmondsKarp(AbstractMaxFlow):
         """
         while True:
             # Step 2: Get residual graph for current flow graph.
-            g_f = self.__residual_graph(self.graph)
-
+            g_f = residual_graph(self.graph)
             # Step 3: Get shortest path (number of edges) from start to target.
             #         If no path could be found, the algorithm hits its end and
             #         finishes.
@@ -42,19 +41,3 @@ class EdmondsKarp(AbstractMaxFlow):
 
         self.flow = sum(map(lambda e: e.flow, self.graph.vertexes[start].edges))
         return self.graph
-
-    @staticmethod
-    def __residual_graph(graph: Flow):
-        g_f = Flow(vertex_count=graph.vertex_count)
-        for v in graph.vertexes.values():
-            for e in v.edges:
-                # residual capacity
-                if e.flow > 0:
-                    g_f.add_edge(e.end, e.start, e.flow, residual=True)
-
-                # remaining capacity
-                u = e.capacity - e.flow
-                if u > 0:
-                    g_f.add_edge(e.start, e.end, u)
-
-        return g_f

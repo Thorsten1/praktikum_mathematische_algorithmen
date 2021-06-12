@@ -2,16 +2,17 @@
 
 import argparse
 
+from graph.flow.cost_minimal.successive_shortest_path import SuccessiveShortestPath
+from graph.flow.max.edmondsKarp import EdmondsKarp
 from graph.graph import Graph
 from graph.mst.kruskal import Kruskal
 from graph.mst.prim import Prim
-from graph.shortest_path.mooreBellmanFord import MooreBellmanFord
 from graph.shortest_path.dijkstra import Dijkstra
+from graph.shortest_path.mooreBellmanFord import MooreBellmanFord
 from graph.tsp.branchAndBound import BranchAndBound
 from graph.tsp.bruteForce import BruteForce
 from graph.tsp.doubleTree import DoubleTree
 from graph.tsp.nearestNeighbour import NearestNeighbour
-from graph.flow.max.edmondsKarp import EdmondsKarp
 
 
 def getArgs() -> argparse.Namespace:
@@ -55,6 +56,9 @@ def getArgs() -> argparse.Namespace:
     parser.add_argument('-bb', '--branchAndBound',
                         action='store_true',
                         help='Use Branch&Bound Algorithm to determine an optimal round trip')
+    parser.add_argument('-ssp', '--successiveShortestPath',
+                        action='store_true',
+                        help='Use Successive Shortest Path Algorithm to determine a cost minimal flow')
 
     parser.add_argument('-s', '--start',
                         type=int,
@@ -124,6 +128,11 @@ if __name__ == '__main__':
         ek.import_from_file(args.graph)
         print(ek(args.start, args.target))
         print('flow:', ek.flow)
+    elif args.successiveShortestPath:
+        ssp = SuccessiveShortestPath()
+        ssp.import_from_file(args.graph)
+        print(ssp())
+        print('flow:', ssp.flow)
 
     else:
         graph = Graph()
