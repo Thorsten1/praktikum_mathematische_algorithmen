@@ -1,4 +1,3 @@
-from graph.graph import timeit
 from graph.shortest_path.abstractShortestPath import ShortestPath
 
 
@@ -9,7 +8,6 @@ class MooreBellmanFord(ShortestPath):
     def __call__(self, start_vertex: int):
         return self._moore_bellman_ford(start_vertex)
 
-    @timeit
     def _moore_bellman_ford(self, start_vertex: int) -> tuple[list, list]:
         """
         Execute the Moore Bellman Ford Algorithm from the provided start vertex

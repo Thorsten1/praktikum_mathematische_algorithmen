@@ -131,8 +131,12 @@ if __name__ == '__main__':
     elif args.successiveShortestPath:
         ssp = SuccessiveShortestPath()
         ssp.import_from_file(args.graph)
-        print(ssp())
-        print('flow:', ssp.flow)
+        result, graph = ssp()
+        if result:
+            # print(graph)
+            print('cost:', ssp.cost)
+        else:
+            print("no b-flow possible")
 
     else:
         graph = Graph()
