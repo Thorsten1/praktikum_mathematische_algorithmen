@@ -18,7 +18,7 @@ class AbstractCostminFlow(abc.ABC):
         with open(filepath, "r") as input_file:
             self.graph = Flow(vertex_count=int(input_file.readline()))
             for i in range(self.graph.vertex_count):
-                self.graph.vertexes[i] = BalanceVertex(value=i, balance=input_file.readline())
+                self.graph.vertexes[i] = BalanceVertex(value=i, balance=float(input_file.readline()))
             for knot in input_file:
                 s, e, cost, cap = knot.split("\t")
                 self.graph.add_edge(int(s), int(e), weight=float(cost.replace('\n', '')), capacity=float(cap))

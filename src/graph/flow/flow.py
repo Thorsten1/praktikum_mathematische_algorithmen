@@ -80,10 +80,10 @@ def residual_graph(graph: Flow):
         for e in v.edges:
             # residual capacity
             if e.flow > 0:
-                g_f.add_edge(e.end, e.start, e.flow, residual=True)
+                g_f.add_edge(e.end, e.start, capacity=e.flow, weight=-e.weight, residual=True)
             # remaining capacity
             u = e.capacity - e.flow
             if u > 0:
-                g_f.add_edge(e.start, e.end, u)
+                g_f.add_edge(e.start, e.end, capacity=u, weight=e.weight)
 
     return g_f
