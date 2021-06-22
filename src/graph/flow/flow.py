@@ -23,7 +23,36 @@ class Flow(Graph):
     def __init__(self, vertex_count=0, weighted=False):
         super(Flow, self).__init__(vertex_count=vertex_count,
                                    directed=True, weighted=weighted)
-        self.vertexes = {i: BalanceVertex(value=i) for i in range(self.vertex_count)}
+        self.vertexes = {i: BalanceVertex(value=i)
+                         for i in range(self.vertex_count)}
+
+    def add_vertex(self, value: int):
+        """
+        Add a new vertex.
+        :param value: The vertex's value.
+        :returns: The created vertex, or an existing one with identical `value`.
+        """
+        v = self.vertexes.get(value)
+        if not v:
+            self.vertexes[value] = v = BalanceVertex(value)
+            self.edges[value] = {}
+            self.vertex_count += 1
+        return v
+
+    def remove_vertex(self, value: int):
+        """
+        Remove a vertex from flow.
+        :param value: Which vertex to remove.
+        """
+        del self.vertexes[value]
+        del self.edges[value]
+        for v in self.vertexes.values():
+            try:
+                v.edges.remove(self.edges[v][value])
+                del self.edges[v][value]
+            except KeyError:
+                pass
+        self.vertex_count -= 1
 
     def add_existing_edge(self, edge: FlowEdge):
         """
@@ -32,13 +61,11 @@ class Flow(Graph):
         :param edge: The edge that shall be added
         :return: void
         """
-        # Generate a new edge and new vertexes so they aren't related to the old graph
-        if not self.vertexes.get(edge.start.value):
-            self.vertexes[edge.start.value] = BalanceVertex(edge.start.value)
-        if not self.vertexes.get(edge.end.value):
-            self.vertexes[edge.end.value] = BalanceVertex(edge.end.value)
-        self.add_edge(edge.start.value, edge.end.value,
-                      edge.weight, edge.flow, edge.capacity)
+        self.add_edge(self.add_vertex(edge.start.value),
+                      self.add_vertex(edge.end.value),
+                      edge.capacity,
+                      edge.flow,
+                      edge.weight)
 
     def add_edge(self, start: int, end: int, capacity: float, flow=0, weight=0, residual=False):
         """

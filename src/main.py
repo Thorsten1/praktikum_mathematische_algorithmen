@@ -3,6 +3,7 @@
 import argparse
 
 from graph.flow.cost_minimal.successive_shortest_path import SuccessiveShortestPath
+from graph.flow.cost_minimal.cycle_canceling import CycleCanceling
 from graph.flow.max.edmondsKarp import EdmondsKarp
 from graph.graph import Graph
 from graph.mst.kruskal import Kruskal
@@ -59,6 +60,9 @@ def getArgs() -> argparse.Namespace:
     parser.add_argument('-ssp', '--successiveShortestPath',
                         action='store_true',
                         help='Use Successive Shortest Path Algorithm to determine a cost minimal flow')
+    parser.add_argument('-cc', '--cycleCanceling',
+                        action='store_true',
+                        help='Use Cycle Canceling Algorithm to determine a cost minimal flow')
 
     parser.add_argument('-s', '--start',
                         type=int,
@@ -137,6 +141,13 @@ if __name__ == '__main__':
             print('cost:', ssp.cost)
         else:
             print("no b-flow possible")
+    elif args.cycleCanceling:
+        cc = CycleCanceling()
+        cc.import_from_file(args.graph)
+        res = cc()
+        if res:
+            print(res)
+            print('cost:', cc.cost)
 
     else:
         graph = Graph()
