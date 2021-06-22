@@ -21,6 +21,7 @@ class MooreBellmanFord(ShortestPath):
         self.distance[start_vertex] = 0
         # Initialize a break condition if nothing has changed within an iteration
         found_better_distance = False
+        hist = []
         # Repeat n-1 times
         for _ in range(self.graph.vertex_count - 1):
             found_better_distance = False
@@ -32,6 +33,7 @@ class MooreBellmanFord(ShortestPath):
                         self.distance[edge.end.value] = self.distance[start] + edge.weight
                         self.predecessors[edge.end.value] = start
                         found_better_distance = True
+                        hist.append(start)
             # break if we haven't found a better option in our current iteration
             if not found_better_distance:
                 break
@@ -41,6 +43,5 @@ class MooreBellmanFord(ShortestPath):
             for start in self.graph.vertexes:
                 for edge in self.graph.edges[start].values():
                     if self.distance[start] + edge.weight < self.distance[edge.end.value]:
-                        print(f"The Edge {edge} is part of a negative circle!")
-                        break
-        return self.distance, self.predecessors
+                        return self.distance, self.predecessors, hist
+        return self.distance, self.predecessors, None

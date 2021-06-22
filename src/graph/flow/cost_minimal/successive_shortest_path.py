@@ -65,7 +65,7 @@ class SuccessiveShortestPath(AbstractCostminFlow):
                 start = s_vertexes[0].value
                 # determine all possible shortest paths to the other vertexes
                 mbf = MooreBellmanFord(graph=g_f)
-                distances, predecessors = mbf(start)
+                distances, predecessors, _ = mbf(start)
                 # choose a sink vertex
                 end = None
                 for v in t_vertexes:
