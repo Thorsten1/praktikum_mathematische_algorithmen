@@ -100,6 +100,13 @@ class Flow(Graph):
         flow = list(filter(lambda e: e.flow > 0, self._flatten_edges()))
         return f"{flow}"
 
+    @property
+    def cost(self) -> float:
+        """
+        :return: Cost of this flow.
+        """
+        return sum(map(lambda e: e.weight * e.flow, self._flatten_edges()))
+
 
 def residual_graph(graph: Flow):
     g_f = Flow(vertex_count=graph.vertex_count)

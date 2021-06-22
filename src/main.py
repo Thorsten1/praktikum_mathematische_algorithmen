@@ -147,7 +147,7 @@ if __name__ == '__main__':
         res = cc()
         if res:
             print(res)
-            print('cost:', cc.cost)
+            print('cost:', res.cost)
 
     else:
         graph = Graph()
