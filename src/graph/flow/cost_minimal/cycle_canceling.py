@@ -54,13 +54,13 @@ class CycleCanceling(AbstractCostminFlow):
         :param residual: The residual graph to be searched.
         :param start: At which node to start the search.
         """
-        (_, predecessor, hist) = MooreBellmanFord(residual)(start)
-        if not hist:
+        (_, predecessor, negHist) = MooreBellmanFord(residual)(start)
+        if not negHist:
             return
 
         # If a negative cycle has been found, search for the first vertex to be
         # in this cycle.
-        v = hist[len(hist) - 1 - residual.vertex_count]
+        v = negHist[len(negHist) - 1 - residual.vertex_count]
         visited = [v]
         while True:
             v = predecessor[v]
